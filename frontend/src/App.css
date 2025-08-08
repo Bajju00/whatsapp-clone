@@ -1,30 +1,56 @@
 /* --- Global Styles & Variables --- */
 :root {
-    --background-default: #f0f2f5;
-    --background-app: #e5ddd5;
-    --background-chat: #e5ddd5;
+    --background-default: #f0f2f5; --background-app: #e5ddd5; --background-chat: #e5ddd5;
     --background-chat-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-    --panel-header-background: #f0f2f5;
-    --primary: #fff;
-    --secondary: #667781;
-    --sent-bubble-background: #dcf8c6;
-    --active-chat-background: #f0f2f5;
-    --hover-chat-background: #f5f5f5;
-    --border-strong: #dadada;
-    --brand-primary: #128C7E;
-    --brand-secondary: #075E54;
-    --text-primary: #111b21;
-    --text-secondary: #667781;
-    --ticks-read: #53bdeb;
+    --panel-header-background: #f0f2f5; --primary: #fff; --secondary: #667781;
+    --sent-bubble-background: #dcf8c6; --active-chat-background: #f0f2f5;
+    --hover-chat-background: #f5f5f5; --border-strong: #dadada;
+    --brand-primary: #128C7E; --brand-secondary: #075E54; --text-primary: #111b21;
+    --text-secondary: #667781; --ticks-read: #53bdeb;
 }
-
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--background-app);
-    color: var(--text-primary);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; background-color: var(--background-app); color: var(--text-primary); }
+::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-thumb { background-color: #c4c4c4; border-radius: 4px; } ::-webkit-scrollbar-track { background-color: transparent; }
+.app-container { display: flex; position: relative; height: 100vh; width: 100vw; background-color: var(--background-default); overflow: hidden; }
+.sidebar-container { display: flex; flex-direction: column; width: 30%; min-width: 320px; max-width: 450px; background: var(--primary); border-right: 1px solid var(--border-strong); }
+.chat-container { flex-grow: 1; display: flex; }
+.sidebar { display: flex; flex-direction: column; width: 100%; height: 100%; }
+.sidebar-header { padding: 10px 16px; background: var(--panel-header-background); border-bottom: 1px solid var(--border-strong); }
+.sidebar-header h3 { margin: 0; font-size: 1.2rem; font-weight: 500; }
+.sidebar-chat-list { flex: 1; overflow-y: auto; }
+.sidebar-chat-item { display: flex; align-items: center; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #f0f2f5; }
+.sidebar-chat-item:hover { background-color: var(--hover-chat-background); }
+.sidebar-chat-item.active { background-color: var(--active-chat-background); }
+.chat-avatar { width: 48px; height: 48px; border-radius: 50%; background-color: #ccc; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; color: white; margin-right: 15px; flex-shrink: 0; }
+.chat-info { flex-grow: 1; overflow: hidden; padding-right: 10px; }
+.chat-name { font-weight: 500; font-size: 1rem; }
+.chat-last-message { font-size: 0.9em; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+.chat-meta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+.chat-timestamp { font-size: 0.75em; color: var(--secondary); }
+.chat-window { width: 100%; height: 100%; display: flex; flex-direction: column; background-color: var(--background-chat); background-image: var(--background-chat-image); }
+.chat-window.empty { align-items: center; justify-content: center; text-align: center; color: var(--secondary); background-image: none; background-color: var(--background-default); }
+.chat-header { display: flex; align-items: center; padding: 10px 16px; background-color: var(--panel-header-background); }
+.chat-messages { flex: 1; padding: 20px 5%; overflow-y: auto; display: flex; flex-direction: column; }
+.message-bubble-container { display: flex; margin-bottom: 12px; max-width: 70%; }
+.message-bubble-container.sent { align-self: flex-end; }
+.message-bubble-container.received { align-self: flex-start; }
+.message-bubble { padding: 8px 12px; border-radius: 8px; font-size: 0.95em; line-height: 1.4; position: relative; }
+.message-bubble-container.sent .message-bubble { background-color: var(--sent-bubble-background); border-top-right-radius: 0; }
+.message-bubble-container.received .message-bubble { background-color: var(--primary); box-shadow: 0 1px 1px rgba(0,0,0,0.05); border-top-left-radius: 0; }
+.message-text { margin-right: 50px; word-wrap: break-word; }
+.message-meta { position: absolute; bottom: 5px; right: 8px; font-size: 0.75em; color: var(--secondary); display: flex; align-items: center; }
+.message-timestamp { margin-right: 5px; }
+.ticks { font-size: 1.1em; } .ticks.read { color: var(--ticks-read); }
+.chat-input-form { display: flex; align-items: center; padding: 10px 20px; background-color: var(--panel-header-background); }
+.chat-input { flex-grow: 1; border: none; padding: 12px 18px; border-radius: 25px; font-size: 1em; background-color: var(--primary); }
+.chat-input:focus { outline: none; }
+.send-button { background: var(--brand-primary); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; margin-left: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.send-button svg { color: white; }
+.back-button { display: none; }
+@media (max-width: 800px) {
+    .sidebar-container { width: 100%; height: 100%; border-right: none; max-width: none; }
+    .chat-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    .hidden-mobile { display: none !important; }
+    .back-button { display: block; margin-right: 15px; cursor: pointer; font-size: 1.2rem; color: var(--secondary); }
 }
 
 /* --- Custom Scrollbar --- */
@@ -44,15 +70,14 @@ body {
 /* --- Main App Layout --- */
 .app-container {
     display: flex;
+    position: relative;
     height: 100vh;
     width: 100vw;
     background-color: var(--background-default);
     overflow: hidden;
 }
 
-
-/* --- Sidebar --- */
-.sidebar {
+.sidebar-container {
     display: flex;
     flex-direction: column;
     width: 30%;
@@ -60,6 +85,19 @@ body {
     max-width: 450px;
     background: var(--primary);
     border-right: 1px solid var(--border-strong);
+}
+
+.chat-container {
+    flex-grow: 1;
+    display: flex;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 .sidebar-header {
@@ -146,7 +184,8 @@ body {
 
 /* --- Chat Window --- */
 .chat-window {
-    flex-grow: 1;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     background-color: var(--background-chat);
@@ -171,7 +210,6 @@ body {
     align-items: center;
     padding: 10px 16px;
     background-color: var(--panel-header-background);
-    border-left: 1px solid #e0e0e0;
 }
 
 .chat-messages {
@@ -186,7 +224,7 @@ body {
 .message-bubble-container {
     display: flex;
     margin-bottom: 12px;
-    max-width: 65%;
+    max-width: 70%;
 }
 
 .message-bubble-container.sent {
@@ -217,7 +255,7 @@ body {
 }
 
 .message-text {
-    margin-right: 50px; /* Space for timestamp */
+    margin-right: 50px;
 }
 
 .message-meta {
@@ -272,7 +310,6 @@ body {
     height: 45px;
     margin-left: 15px;
     cursor: pointer;
-    font-size: 1.2em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -283,15 +320,54 @@ body {
     background-color: var(--brand-secondary);
 }
 
-/* --- Responsive Design for Mobile --- */
+.send-button svg {
+    color: white;
+}
+
+.back-button {
+    display: none;
+}
+
+/*
+ =========================================
+  MOBILE RESPONSIVE STYLES
+ =========================================
+*/
 @media (max-width: 800px) {
-    .sidebar {
+    .sidebar-container {
         width: 100%;
-        max-width: 100%;
+        height: 100%;
         border-right: none;
+        max-width: none;
     }
-    .chat-window {
-        /* In a real app, you would navigate, but for this demo we just hide it */
-        display: none;
+
+    .chat-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .chat-container:not(.hidden-mobile) {
+        transform: translateX(0);
+    }
+    
+    .sidebar-container.hidden-mobile {
+        /* This could be used for an animation if desired, but display:none is simpler */
+    }
+
+    .hidden-mobile {
+        display: none !important;
+    }
+
+    .back-button {
+        display: block;
+        margin-right: 15px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--secondary);
     }
 }

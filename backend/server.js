@@ -11,7 +11,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: "*", // In production, restrict this to your frontend's URL
         methods: ["GET", "POST"]
     }
 });
@@ -25,6 +25,7 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB connected successfully.'))
     .catch(err => console.error('MongoDB connection error:', err));
 
+// Mount the routes under the /api prefix
 app.use('/api', messageRoutes);
 
 io.on('connection', (socket) => {

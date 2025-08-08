@@ -3,7 +3,7 @@ import axios from 'axios';
 import { formatRelative } from 'date-fns';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io();
 
 const Sidebar = ({ onSelectChat, selectedChatId }) => {
     const [conversations, setConversations] = useState([]);
@@ -19,22 +19,15 @@ const Sidebar = ({ onSelectChat, selectedChatId }) => {
 
     useEffect(() => {
         fetchConversations();
-
-        socket.on('newMessage', (newMessage) => {
-            // Re-fetch conversations when a new message comes in
-            fetchConversations();
-        });
-
+        socket.on('newMessage', fetchConversations);
         return () => {
-            socket.off('newMessage');
+            socket.off('newMessage', fetchConversations);
         };
     }, []);
 
     return (
         <div className="sidebar">
-            <div className="sidebar-header">
-                <h3>Chats</h3>
-            </div>
+            <div className="sidebar-header"><h3>Chats</h3></div>
             <div className="sidebar-chat-list">
                 {conversations.map(chat => (
                     <div
@@ -42,7 +35,7 @@ const Sidebar = ({ onSelectChat, selectedChatId }) => {
                         className={`sidebar-chat-item ${selectedChatId === chat.wa_id ? 'active' : ''}`}
                         onClick={() => onSelectChat(chat)}
                     >
-                        <div className="chat-avatar">{chat.name.charAt(0)}</div>
+                        <div className="chat-avatar">{chat.name.charAt(0).toUpperCase()}</div>
                         <div className="chat-info">
                             <span className="chat-name">{chat.name}</span>
                             <p className="chat-last-message">{chat.lastMessage}</p>

@@ -6,10 +6,30 @@ import './App.css';
 function App() {
     const [selectedChat, setSelectedChat] = useState(null);
 
+    const handleSelectChat = (chat) => {
+        setSelectedChat(chat);
+    };
+
+    const handleBack = () => {
+        setSelectedChat(null);
+    };
+
     return (
         <div className="app-container">
-            <Sidebar onSelectChat={setSelectedChat} selectedChatId={selectedChat?.wa_id} />
-            <ChatWindow selectedChat={selectedChat} />
+            <div className={`sidebar-container ${selectedChat ? 'hidden-mobile' : ''}`}>
+                <Sidebar
+                    onSelectChat={handleSelectChat}
+                    selectedChatId={selectedChat?.wa_id}
+                />
+            </div>
+            <div className={`chat-container ${selectedChat ? '' : 'hidden-mobile'}`}>
+                {selectedChat && (
+                    <ChatWindow 
+                        selectedChat={selectedChat} 
+                        onBack={handleBack} 
+                    />
+                )}
+            </div>
         </div>
     );
 }

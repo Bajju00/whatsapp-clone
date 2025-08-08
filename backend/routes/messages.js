@@ -2,21 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/message');
 
-// GET all unique conversations (users)
+// GET all unique conversations
 router.get('/conversations', async (req, res) => {
     try {
         const conversations = await Message.aggregate([
             { $sort: { timestamp: -1 } },
             {
                 $project: {
-                    text: 1,
-                    timestamp: 1,
+                    text: 1, timestamp: 1,
                     contact_id: {
-                        $cond: {
-                            if: { $eq: ["$direction", "inbound"] },
-                            then: "$from",
-                            else: "$to"
-                        }
+                        $cond: { if: { $eq: ["$direction", "inbound"] }, then: "$from", else: "$to" }
                     }
                 }
             },
@@ -28,19 +23,12 @@ router.get('/conversations', async (req, res) => {
                 }
             },
             {
-                $project: {
-                    _id: 0,
-                    wa_id: "$_id",
-                    name: "$_id",
-                    lastMessage: 1,
-                    lastMessageTimestamp: 1
-                }
+                $project: { _id: 0, wa_id: "$_id", name: "$_id", lastMessage: 1, lastMessageTimestamp: 1 }
             },
             { $sort: { lastMessageTimestamp: -1 } }
         ]);
         res.json(conversations);
     } catch (error) {
-        console.error("Error fetching conversations:", error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -57,13 +45,13 @@ router.get('/conversations/:wa_id', async (req, res) => {
     }
 });
 
-// POST a new message (from our frontend)
+// POST a new message
 router.post('/messages', async (req, res) => {
     const { to, text } = req.body;
     const io = req.app.get('socketio');
     const newMessage = new Message({
         messageId: `self_${Date.now()}`,
-        from: 'YOUR_BUSINESS_NUMBER', // Replace if needed
+        from: 'YOUR_BUSINESS_NUMBER',
         to: to,
         timestamp: new Date(),
         text: { body: text },
@@ -79,42 +67,28 @@ router.post('/messages', async (req, res) => {
     }
 });
 
-// POST webhook endpoint for processing WhatsApp payloads
+// POST webhook endpoint
 router.post('/webhook', async (req, res) => {
     const payload = req.body;
     const io = req.app.get('socketio');
-
     try {
-        // You can remove the console.log now if you want
-
-        // Check if it's a new message payload
-        if (payload.metaData && payload.metaData.entry && payload.metaData.entry[0].changes && payload.metaData.entry[0].changes[0].value.messages) {
+        if (payload.metaData && payload.metaData.entry[0].changes[0].value.messages) {
             const messageData = payload.metaData.entry[0].changes[0].value.messages[0];
             const metadata = payload.metaData.entry[0].changes[0].value.metadata;
-
             const newMessage = new Message({
-                messageId: messageData.id,
-                from: messageData.from,
-                to: metadata.display_phone_number,
+                messageId: messageData.id, from: messageData.from, to: metadata.display_phone_number,
                 timestamp: new Date(parseInt(messageData.timestamp) * 1000),
-                text: { body: messageData.text.body },
-                direction: 'inbound'
+                text: { body: messageData.text.body }, direction: 'inbound'
             });
             await newMessage.save();
             io.emit('newMessage', newMessage);
         }
-
-        // Check if it's a status update payload
-        if (payload.metaData && payload.metaData.entry && payload.metaData.entry[0].changes && payload.metaData.entry[0].changes[0].value.statuses) {
+        if (payload.metaData && payload.metaData.entry[0].changes[0].value.statuses) {
             const statusData = payload.metaData.entry[0].changes[0].value.statuses[0];
             const updatedMessage = await Message.findOneAndUpdate(
-                { messageId: statusData.id },
-                { $set: { status: statusData.status } },
-                { new: true }
+                { messageId: statusData.id }, { $set: { status: statusData.status } }, { new: true }
             );
-            if (updatedMessage) {
-                io.emit('updateStatus', updatedMessage);
-            }
+            if (updatedMessage) { io.emit('updateStatus', updatedMessage); }
         }
         res.status(200).send('EVENT_RECEIVED');
     } catch (error) {
